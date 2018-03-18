@@ -232,6 +232,7 @@ static int draw_menu_item(int top, int item) {
   switch(menu[item].type) {
 
     case MENUITEM_SMALL:
+      {
       color_text = gr_make_uicolor(255, 255, 255, 255);
       color_background = gr_make_uicolor(0, 0, 0, 255);
 
@@ -292,6 +293,7 @@ static int draw_menu_item(int top, int item) {
       }
 
       break;
+      }
     case MENUITEM_NULL:
     default:
       break;
@@ -766,7 +768,7 @@ void ui_free_bitmaps(void)
   //free bitmaps
   for (i = 0; BITMAPS[i].name != NULL; ++i) {
     if (BITMAPS[i].surface != NULL) {
-      ui_print("free bitmap %d @ %x\n", i, (unsigned) BITMAPS[i].surface);
+      ui_print("free bitmap %d @ %x\n", i, (uintptr_t) BITMAPS[i].surface);
       res_free_surface(BITMAPS[i].surface);
     }
   }

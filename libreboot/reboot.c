@@ -1,6 +1,7 @@
 #include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <sys/reboot.h>
 #include <unistd.h>
 
@@ -130,7 +131,7 @@ int reboot_wrapper(const char* reason) {
     #endif
 
     if (reboot_with_reason)
-        ret = __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, (char *)reason);
+        ret = reboot(LINUX_REBOOT_CMD_RESTART2);
     else
         //android_reboot(ANDROID_RB_RESTART, 0, 0);
         ret = reboot(RB_AUTOBOOT);
@@ -174,7 +175,7 @@ int reboot_main(int argc, char *argv[])
         sync();
 
     if(poweroff)
-        ret = __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_POWER_OFF, NULL);
+        ret = reboot(LINUX_REBOOT_CMD_POWER_OFF);
     else if(argc > optind) {
         ret = reboot_wrapper(argv[optind]);
     } else

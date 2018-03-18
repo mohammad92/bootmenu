@@ -15,6 +15,7 @@
  */
 
 #include <errno.h>
+#include <signal.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -27,7 +28,6 @@
 
 #include "common.h"
 #include "extendedcommands.h"
-#include "overclock.h"
 #include "minui/minui.h"
 #include "bootmenu_ui.h"
 
@@ -344,6 +344,10 @@ int show_menu_usb_mount_tools(void) {
 #define TOOL_NATIVE  4
 #define TOOL_UMOUNT  6
 
+#ifndef BOARD_MMC_DEVICE
+#define BOARD_MMC_DEVICE "/dev/block/mmcblk1"
+#endif
+
   int status;
 
   const char* headers[] = {
@@ -433,10 +437,6 @@ int show_menu_tools(void) {
 #define USB_TOOLS    1
 #define FS_TOOLS     2
 
-#ifndef BOARD_MMC_DEVICE
-#define BOARD_MMC_DEVICE "/dev/block/mmcblk1"
-#endif
-
   int status;
 
   const char* headers[] = {
@@ -524,7 +524,7 @@ int show_menu_recovery(void) {
     case RECOVERY_STOCK:
       ui_print("Rebooting to Stock Recovery..\n");
       sync();
-      __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART2, "recovery");
+      reboot(LINUX_REBOOT_CMD_RESTART2);
 
     default:
       break;
@@ -730,12 +730,12 @@ int exec_and_wait(char** argp) {
     _exit(127);
   }
 
-  intsave = (sig_t)  bsd_signal(SIGINT, SIG_IGN);
-  quitsave = (sig_t) bsd_signal(SIGQUIT, SIG_IGN);
+  intsave = (sig_t)  signal(SIGINT, SIG_IGN);
+  quitsave = (sig_t) signal(SIGQUIT, SIG_IGN);
   pid = waitpid(pid, (int *)&pstat, 0);
   sigprocmask(SIG_SETMASK, &omask, NULL);
-  (void)bsd_signal(SIGINT, intsave);
-  (void)bsd_signal(SIGQUIT, quitsave);
+  (void)signal(SIGINT, intsave);
+  (void)signal(SIGQUIT, quitsave);
   return (pid == -1 ? -1 : pstat);
 }
 
@@ -756,7 +756,7 @@ int exec_script(const char* filename, int ui) {
 
   chmod(filename, 0755);
 
-  args = malloc(sizeof(char*) * 2);
+  args = (char **)malloc(sizeof(char*) * 2);
   args[0] = (char *) filename;
   args[1] = NULL;
 

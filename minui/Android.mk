@@ -1,8 +1,10 @@
-ifeq ($(BOARD_USES_BOOTMENU),true)
-
 LOCAL_PATH := $(call my-dir)
 
 include $(CLEAR_VARS)
+
+ifndef RECOVERY_INCLUDE_DIR
+    RECOVERY_INCLUDE_DIR := $(commands_recovery_local_path)/minui/include
+endif
 
 LOCAL_SRC_FILES := events.c resources.c
 
@@ -14,7 +16,9 @@ endif
 
 LOCAL_C_INCLUDES +=\
     external/libpng\
-    external/zlib
+    external/zlib \
+    system/core/libpixelflinger/include \
+    $(RECOVERY_INCLUDE_DIR)
 
 LOCAL_MODULE := libminui_bm
 LOCAL_MODULE_TAGS := eng debug
@@ -47,5 +51,3 @@ include $(BUILD_STATIC_LIBRARY)
 #LOCAL_MODULE_TAGS := optional
 #LOCAL_SRC_FILES := mkfont.c
 #include $(BUILD_EXECUTABLE)
-
-endif #BOARD_USES_BOOTMENU

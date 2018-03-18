@@ -14,16 +14,24 @@
  * limitations under the License.
  */
 
+#include <stdbool.h>
 #include <stdlib.h>
 #include <unistd.h>
+
+#include <errno.h>
 #include <fcntl.h>
 #include <stdio.h>
+#include <string.h>
+
 #include <sys/ioctl.h>
 #include <sys/mman.h>
 #include <sys/types.h>
+
 #include <linux/fb.h>
 #include <linux/kd.h>
+
 #include <pixelflinger/pixelflinger.h>
+
 #include <math.h>
 
 #if defined(PIXELS_BGRA)
@@ -194,7 +202,7 @@ static int get_framebuffer(GGLSurface *fb)
     fb->width = vi.xres;
     fb->height = vi.yres;
     fb->stride = fi.line_length/PIXEL_SIZE;
-    fb->data = (void*) (((unsigned) bits) + vi.yres * fi.line_length);
+    fb->data = (void*) (((uintptr_t) bits) + vi.yres * fi.line_length);
     fb->format = PIXEL_FORMAT;
     gr_fb_clear(fb);
 

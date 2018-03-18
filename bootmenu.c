@@ -20,12 +20,12 @@
 #include <stdlib.h>
 #include <sys/reboot.h>
 #include <time.h>
+#include <string.h>
 
 #include <unistd.h>
 
 #include "common.h"
 #include "extendedcommands.h"
-#include "overclock.h"
 #include "minui/minui.h"
 #include "bootmenu_ui.h"
 
@@ -84,7 +84,7 @@ char** prepend_title(const char** headers) {
   for (p = title; *p; ++p, ++count);
   for (p = (char**) headers; *p; ++p, ++count);
 
-  char** new_headers = malloc((count+1) * sizeof(char*));
+  char** new_headers = (char **)malloc((count+1) * sizeof(char*));
   char** h = new_headers;
   for (p = title; *p; ++p, ++h) *h = *p;
   for (p = (char**) headers; *p; ++p, ++h) *h = *p;
@@ -219,9 +219,6 @@ static void prompt_and_wait() {
       case ITEM_BOOT:
         if (show_menu_boot()) return;
         break;
-      case ITEM_OVERCLOCK:
-        if (show_menu_overclock()) return;
-        break;
       case ITEM_RECOVERY:
         if (show_menu_recovery()) return;
         break;
@@ -230,11 +227,11 @@ static void prompt_and_wait() {
         break;
       case ITEM_REBOOT:
         sync();
-        __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_RESTART, NULL);
+        reboot(RB_AUTOBOOT);
         return;
       case ITEM_POWEROFF:
         sync();
-        __reboot(LINUX_REBOOT_MAGIC1, LINUX_REBOOT_MAGIC2, LINUX_REBOOT_CMD_POWER_OFF, NULL);
+        reboot(LINUX_REBOOT_CMD_POWER_OFF);
         return;
       }
       select = menuret.result;

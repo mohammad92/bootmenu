@@ -1,5 +1,3 @@
-ifeq ($(BOARD_USES_BOOTMENU),true)
-
 LOCAL_PATH := $(call my-dir)
 
 # build device static library
@@ -56,5 +54,3 @@ LOCAL_FORCE_STATIC_EXECUTABLE := true
 LOCAL_MODULE_PATH := $(PRODUCT_OUT)/system/bootmenu/binary
 
 include $(BUILD_EXECUTABLE)
-
-endif # BOARD_USES_BOOTMENU

@@ -20,8 +20,12 @@
 #include <dirent.h>
 #include <sys/poll.h>
 #include <limits.h>
-
 #include <linux/input.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <string.h>
 
 #include "../common.h"
 
